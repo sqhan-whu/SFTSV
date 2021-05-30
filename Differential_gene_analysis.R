@@ -123,8 +123,8 @@ smoothScatter(x= detable$logCPM, y= detable$logFC, xlab= 'logCPM', ylab= 'logFC'
 #lines(loess.smooth(x= detable$logCPM, y= detable$logFC, span= 0.1), lwd= 2, col= 'grey60')
 abline(h= c( 0), col= 'grey30')
 points(x= detable$logCPM, y= detable$logFC, col= ifelse(detable$PValue.x < 0.001 & detable$PValue.y < 0.001 & detable$PValue < 0.001, '#FF000080', 'grey75'), cex= 2, pch= '.') # Mark DE genes
-mtext(side= 3, line= -1.2, text= sprintf('PValue < 0.001: %s', nrow(detable[PValue.x < 0.001 & PValue.y < 0.001 & PValue < 0.001 & logFC > 0])), adj= 1)
-mtext(side= 1, line= -1.2, text= sprintf('PValue < 0.001: %s', nrow(detable[PValue.x < 0.001 & PValue.y < 0.001 & PValue < 0.001 & logFC < 0])), adj= 1)
+mtext(side= 3, line= -1.2, text= sprintf('PValue < 0.001: %s', nrow(detable[PValue.x < 0.001 & PValue.y < 0.001 & PValue < 0.001 & logFC > 1])), adj= 1)
+mtext(side= 1, line= -1.2, text= sprintf('PValue < 0.001: %s', nrow(detable[PValue.x < 0.001 & PValue.y < 0.001 & PValue < 0.001 & logFC < -1])), adj= 1)
 grid(col= 'grey50')
 dev.off()
 
