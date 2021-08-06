@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+use FindBin qw($Bin);
+use Cwd qw(abs_path);
+$fq1=shift;
+$fq2=shift;
+$dirname=shift;
+@out=split /\//,$fq1;
+@out2=split /\//,$fq2;
+@name=split /_/,$out[-1];
+@name2=split /_/,$out2[-1];
+@trim_name=split /\./,$out[-1];
+@trim_name2= split /\./,$out2[-1];
+$dir=abs_path($dirname);
+`mkdir -p $dir/$name[0]/Shell`;
+open F, ">$dir/$name[0]/Shell/$name[0]\_filter.sh";
+print F "#!/bin/bash\n#SBATCH -N 1 -c 16\n";
+print F "trim_galore -j 16 --quality 20 --phred33 --stringency 3 --length 35 -o $dir/$name[0] --paired $fq1 $fq2\n";
+print F "gunzip $dir/$name[0]/$trim_name[0]\_val_1.fq.gz $dir/$name[0]/$trim_name2[0]\_val_2.fq.gz\n";
+print F "bowtie -S --rf -p 16 /home/liujizhou/project/00.DATABASE/rRNA_database/rRNA_database -1 $dir/$name[0]/$trim_name[0]\_val_1.fq -2 $dir/$name[0]/$trim_name2[0]\_val_2.fq --un $dir/$name[0]/$name[0]\_rmrRNA.fq -S $dir/$name[0]/$name[0].rRNA.sam\n";
+print F "rm $dir/$name[0]/$name[0].rRNA.sam\n";
+print F "STAR --genomeDir /home/liujizhou/workfs/SFTSV-IP/process/Genome/STAR_INDEX --readFilesIn $dir/$name[0]/$name[0]\_rmrRNA_1.fq $dir/$name[0]/$name[0]\_rmrRNA_2.fq --runThreadN 16 --alignIntronMax 100000 --alignMatesGapMax 100000 --outFilterMismatchNmax 20 --outFilterMismatchNoverLmax 0.2 --readFilesCommand cat --outSAMtype BAM SortedByCoordinate --outFileNamePrefix $dir/$name[0]/$name[0].\n";
+print F "samtools index -@ 16 $dir/$name[0]/$name[0].Aligned.sortedByCoord.out.bam\n";
+print F "rm $dir/$name[0]/$name[0].sam $dir/$name[0]/$name[0]*.fq\n";
+close F;
